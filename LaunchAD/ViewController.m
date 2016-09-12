@@ -32,7 +32,7 @@
     NSString *imageUrl = @"http://img5q.duitang.com/uploads/item/201505/25/20150525223238_NdQrh.thumb.700_0.png";
     NSString *adURL = @"http://tieba.baidu.com/";
     
-    //创建广告
+    //1、创建广告
     ADView *adView = [[ADView alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds andImgUrl:imageUrl andADUrl:adURL andClickBlock:^(NSString *clikImgUrl) {
         
         NSLog(@"进入广告:%@",clikImgUrl);
@@ -43,7 +43,7 @@
     //设置倒计时（默认3秒）
     adView.showTime = 5;
     
-    //显示广告
+    //2、显示广告
     [adView show];
     
 

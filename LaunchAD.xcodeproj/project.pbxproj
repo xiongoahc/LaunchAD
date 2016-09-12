@@ -17,6 +17,7 @@
 		030DDD4B1D86BD47008E58C6 /* LaunchADUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 030DDD4A1D86BD47008E58C6 /* LaunchADUITests.m */; };
 		030DDD5A1D86BD84008E58C6 /* ADViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 030DDD591D86BD84008E58C6 /* ADViewController.m */; };
 		030DDD5D1D86BF4F008E58C6 /* ADView.m in Sources */ = {isa = PBXBuildFile; fileRef = 030DDD5C1D86BF4F008E58C6 /* ADView.m */; };
+		030DDD5F1D86DB2A008E58C6 /* 效果图.gif in Resources */ = {isa = PBXBuildFile; fileRef = 030DDD5E1D86DB2A008E58C6 /* 效果图.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		030DDD591D86BD84008E58C6 /* ADViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADViewController.m; sourceTree = "<group>"; };
 		030DDD5B1D86BF4F008E58C6 /* ADView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADView.h; sourceTree = "<group>"; };
 		030DDD5C1D86BF4F008E58C6 /* ADView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADView.m; sourceTree = "<group>"; };
+		030DDD5E1D86DB2A008E58C6 /* 效果图.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "效果图.gif"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 		030DDD241D86BD47008E58C6 /* LaunchAD */ = {
 			isa = PBXGroup;
 			children = (
+				030DDD5E1D86DB2A008E58C6 /* 效果图.gif */,
 				030DDD281D86BD47008E58C6 /* AppDelegate.h */,
 				030DDD291D86BD47008E58C6 /* AppDelegate.m */,
 				030DDD2B1D86BD47008E58C6 /* ViewController.h */,
@@ -257,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				030DDD351D86BD47008E58C6 /* LaunchScreen.storyboard in Resources */,
+				030DDD5F1D86DB2A008E58C6 /* 效果图.gif in Resources */,
 				030DDD321D86BD47008E58C6 /* Assets.xcassets in Resources */,
 				030DDD301D86BD47008E58C6 /* Main.storyboard in Resources */,
 			);
