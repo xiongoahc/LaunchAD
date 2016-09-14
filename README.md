@@ -2,7 +2,7 @@
 两行代码添加iOS应用启动广告的功能，代码可添加到任意地方，支持无网络显示，可点击进入广告页面。
 ![image](https://github.com/xiongoahc/LaunchAD/blob/master/LaunchAD/%E6%95%88%E6%9E%9C%E5%9B%BE.gif)   
 使用方法：
-在使用的地方添加如下代码
+在使用的地方导入头文件ADView.h之后，添加如下代码
 
     NSString *imageUrl = @"http://img5q.duitang.com/uploads/item/201505/25/20150525223238_NdQrh.thumb.700_0.png";
     NSString *adURL = @"http://tieba.baidu.com/";
