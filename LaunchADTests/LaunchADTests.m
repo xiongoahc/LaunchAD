@@ -2,8 +2,8 @@
 //  LaunchADTests.m
 //  LaunchADTests
 //
-//  Created by 熊超 on 16/9/12.
-//  Copyright © 2016年 xiongchao. All rights reserved.
+//  Created by xiongoahc on 16/9/12.
+//  Copyright © 2016年 xiongoahc. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

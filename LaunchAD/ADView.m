@@ -2,8 +2,8 @@
 //  ADView.m
 //  LaunchAD
 //
-//  Created by 熊超 on 16/9/12.
-//  Copyright © 2016年 xiongchao. All rights reserved.
+//  Created by xiongoahc on 16/9/12.
+//  Copyright © 2016年 xiongoahc. All rights reserved.
 //
 
 #import "ADView.h"
@@ -20,7 +20,7 @@
 @property (nonatomic, assign) NSUInteger count;
 
 /** 广告图片本地路径 */
-@property (nonatomic,copy) NSString *filePath;
+@property (nonatomic,copy) NSString *imgPath;
 
 /** 新广告图片地址 */
 @property (nonatomic,copy) NSString *imgUrl;
@@ -31,8 +31,8 @@
 /** 所点击的广告链接 */
 @property (nonatomic,copy) NSString *clickAdUrl;
 
-/** 点击回调block */
-@property (nonatomic,copy) void (^clickBlock)(NSString *url);
+/** 点击图片回调block */
+@property (nonatomic,copy) void (^clickImg)(NSString *url);
 
 @end
 
@@ -42,14 +42,10 @@
 {
     if (_showTime == 0)
     {
-        return 3;
+        _showTime = 3;
     }
-    else
-    {
-        return _showTime;
-    }
+    return _showTime;
 }
-
 
 - (NSTimer *)countTimer
 {
@@ -69,14 +65,15 @@
  *
  *  @return self
  */
--(instancetype)initWithFrame:(CGRect)frame andImgUrl:(NSString *)imageUrl andADUrl:(NSString *)adUrl andClickBlock:(void (^)(NSString *))block
+- (instancetype)initWithFrame:(CGRect)frame imgUrl:(NSString *)img adUrl:(NSString *)ad clickImg:(void(^)(NSString *clikImgUrl))block
 {
     self = [super initWithFrame:frame];
     if (self) {
+        
         //给属性赋值
-        _clickBlock = block;
-        _imgUrl = imageUrl;
-        _adUrl = adUrl;
+        _clickImg = block;
+        _imgUrl = img;
+        _adUrl = ad;
         
         //广告图片
         _adView = [[UIImageView alloc] initWithFrame:frame];
@@ -89,7 +86,7 @@
         //跳过按钮
         CGFloat btnW = 60;
         CGFloat btnH = 30;
-        _countBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - btnW - 24, btnH, btnW, btnH)];
+        _countBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - btnW - 24, btnH, btnW, btnH)];
         [_countBtn addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
         _countBtn.titleLabel.font = [UIFont systemFontOfSize:15];
         [_countBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -111,12 +108,10 @@
         //设置按钮倒计时
         [_countBtn setTitle:[NSString stringWithFormat:@"跳过%zd", self.showTime] forState:UIControlStateNormal];
         //当前显示的广告图片
-        _adView.image = [UIImage imageWithContentsOfFile:_filePath];
+        _adView.image = [UIImage imageWithContentsOfFile:_imgPath];
         //当前显示的广告链接
         _clickAdUrl = [UserDefaults valueForKey:adUrl];
-        // 倒计时方法1：GCD
-        // [self startCoundown];
-        // 倒计时方法2：定时器
+        //开启倒计时
         [self startTimer];
         UIWindow *window = [UIApplication sharedApplication].keyWindow;
         [window addSubview:self];
@@ -129,8 +124,9 @@
 //判断沙盒中是否存在广告图片，如果存在，直接显示
 - (BOOL)imageExist
 {
-    _filePath = [self getFilePathWithImageName:[UserDefaults valueForKey:adImageName]];
-    BOOL isExist = [self isFileExistWithFilePath:_filePath];
+    _imgPath = [self getFilePathWithImageName:[UserDefaults valueForKey:adImageName]];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL isExist = [fileManager fileExistsAtPath:_imgPath];
     return isExist;
 }
 
@@ -140,7 +136,7 @@
     if (_clickAdUrl)
     {
         //把所点击的广告链接回调出去
-        _clickBlock(_clickAdUrl);
+        _clickImg(_clickAdUrl);
         [self dismiss];
     }
     
@@ -165,31 +161,6 @@
     [[NSRunLoop mainRunLoop] addTimer:self.countTimer forMode:NSRunLoopCommonModes];
 }
 
-// GCD倒计时
-- (void)startCoundown
-{
-    __block NSUInteger timeout = self.showTime + 1; //倒计时时间 + 1
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);
-    dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0 * NSEC_PER_SEC, 0); //每秒执行
-    dispatch_source_set_event_handler(_timer, ^{
-        if(timeout <= 0){ //倒计时结束，关闭
-            dispatch_source_cancel(_timer);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self dismiss];
-                
-            });
-        }else{
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_countBtn setTitle:[NSString stringWithFormat:@"跳过%zd",timeout] forState:UIControlStateNormal];
-            });
-            timeout--;
-        }
-    });
-    dispatch_resume(_timer);
-}
 
 // 移除广告页面
 - (void)dismiss
@@ -213,10 +184,12 @@
 - (void)setNewADImgUrl:(NSString *)imgUrl
 {
     //获取图片名字（***.png）
-    NSString *imgName = [[imgUrl componentsSeparatedByString:@"/"]lastObject];
+    NSString *imgName = [imgUrl lastPathComponent];
     //拼接沙盒路径
     NSString *filePath = [self getFilePathWithImageName:imgName];
-    BOOL isExist = [self isFileExistWithFilePath:filePath];
+    //判断路径是否存在
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL isExist = [fileManager fileExistsAtPath:filePath];
     if (!isExist){// 如果本地没有该图片，下载新图片保存，并且删除旧图片
         [self downloadAdImageWithUrl:imgUrl imageName:imgName];
     }
@@ -250,18 +223,6 @@
 }
 
 
-#pragma mark - 文件操作
-
-/**
- *  判断文件是否存在
- */
-- (BOOL)isFileExistWithFilePath:(NSString *)filePath
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    BOOL isDirectory = FALSE;
-    return [fileManager fileExistsAtPath:filePath isDirectory:&isDirectory];
-}
-
 /**
  *  根据图片名拼接文件路径
  */
@@ -269,10 +230,9 @@
 {
 
     if (imageName) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES);
-        NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:imageName];
-        
-        return filePath;
+        NSString *cachesPath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory,NSUserDomainMask, YES) firstObject];
+        NSString *imgPath =[cachesPath stringByAppendingPathComponent:imageName];
+        return imgPath;
     }
     return nil;
 }
@@ -284,9 +244,9 @@
 {
     NSString *imageName = [UserDefaults valueForKey:adImageName];
     if (imageName) {
-        NSString *filePath = [self getFilePathWithImageName:imageName];
+        NSString *imgPath = [self getFilePathWithImageName:imageName];
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        [fileManager removeItemAtPath:filePath error:nil];
+        [fileManager removeItemAtPath:imgPath error:nil];
     }
 }
 

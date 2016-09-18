@@ -2,8 +2,8 @@
 //  main.m
 //  LaunchAD
 //
-//  Created by 熊超 on 16/9/12.
-//  Copyright © 2016年 xiongchao. All rights reserved.
+//  Created by xiongoahc on 16/9/12.
+//  Copyright © 2016年 xiongoahc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
