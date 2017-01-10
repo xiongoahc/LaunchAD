@@ -116,8 +116,12 @@
         UIWindow *window = [UIApplication sharedApplication].keyWindow;
         [window addSubview:self];
     }
-    //不管本地是否存在广告图片都获取最新图片
-    [self setNewADImgUrl:_imgUrl];
+    else
+    {
+        //获取最新图片
+        [self setNewADImgUrl:_imgUrl];
+    }
+    
 }
 
 
@@ -175,9 +179,9 @@
     } completion:^(BOOL finished) {
         
         [self removeFromSuperview];
-        
+        //获取最新图片,为下一次启动做准备
+        [self setNewADImgUrl:_imgUrl];
     }];
-    
 }
 
 //获取最新广告
